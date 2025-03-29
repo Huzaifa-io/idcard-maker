@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student ID Card Generator</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .form-container {
+            flex: 1;
+            min-width: 300px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-container {
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #0066cc;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #0066cc;
+            font-size: 22px;
+            border-bottom: 2px solid #e6e6e6;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+            outline: none;
+        }
+        
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 15px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #0055aa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .id-card {
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transition: transform 0.3s;
+            background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+        }
+        
+        .id-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .card-header {
+            background-color: #0066cc;
+            color: white;
+            padding: 18px 15px;
+            position: relative;
+        }
+        
+        .school-name {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .school-address {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        
+        .semis-code {
+            position: absolute;
+            top: 170px;
+            left: 15px;
+            width: 150px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            background: linear-gradient(to right, #0156aa, #0099ff);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .student-name-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            padding: 5px 10px;
+            color: #0066cc;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .student-name-display::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #0066cc, transparent);
+        }
+        
+        .card-body {
+            padding: 10px 15px;
+            display: flex;
+            height: calc(100% - 200px);
+            position: relative;
+            margin-top: -80px;
+        }
+        
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-right: 10px;
+            margin-top: 30px;
+        }
+        
+        .class-badge {
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            width: 150px;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .class-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.1) 25%, 
+                                             rgba(255, 255, 255, 0.1) 50%, transparent 50%, 
+                                             transparent 75%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 10px 10px;
+            z-index: 1;
+        }
+        
+        .class-badge span {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .class-emoji {
+            font-size: 22px;
+            margin-right: 5px;
+        }
+        
+        .right-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-left: 10px;
+            position: relative;
+        }
+        
+        .student-photo-container {
+            position: relative;
+        }
+        
+        .student-photo {
+            width: 130px;
+            height: 150px;
+            border: 4px solid #0066cc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .student-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-footer {
+            padding: 15px;
+            background-color: rgba(249, 249, 249, 0.9);
+            border-top: 1px solid #eee;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .student-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .detail-item {
+            margin-bottom: 6px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 2px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            color: #222;
+        }
+        
+        .signature {
+            text-align: right;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 12px;
+            border-top: 1px dashed #ccc;
+            padding-top: 8px;
+            color: #444;
+        }
+        
+        .download-btn {
+            margin-top: 25px;
+            background-color: #28a745;
+        }
+        
+        .download-btn:hover {
+            background-color: #218838;
+        }
+        
+        .download-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .download-options button {
+            flex: 1;
+        }
+        
+        .download-png {
+            background-color: #28a745;
+        }
+        
+        .download-png:hover {
+            background-color: #218838;
+        }
+        
+        .download-pdf {
+            background-color: #dc3545;
+        }
+        
+        .download-pdf:hover {
+            background-color: #c82333;
+        }
+        
+        .customization-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .bg-pattern-1 {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .bg-pattern-2 {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.07'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .bg-pattern-3 {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.06'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .bg-pattern-4 {
+            background-color: #ffffff;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='24' viewBox='0 0 88 24'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='autumn' fill='%230066cc' fill-opacity='0.05'%3E%3Cpath d='M10 0l30 15 2 1V2.18A10 10 0 0 0 41.76 0H39.7a8 8 0 0 1 .3 2.18v10.58L14.47 0H10zm31.76 24a10 10 0 0 0-5.29-6.76L4 1 2 0v13.82a10 10 0 0 0 5.53 8.94L10 24h4.47l-6.05-3.02A8 8 0 0 1 4 13.82V3.24l31.58 15.78A8 8 0 0 1 39.7 24h2.06zM78 24l2.47-1.24A10 10 0 0 0 86 13.82V0l-2 1-32.47 16.24A10 10 0 0 0 46.24 24h2.06a8 8 0 0 1 4.12-4.98L84 3.24v10.58a8 8 0 0 1-4.42 7.16L73.53 24H78zm0-24L48 15l-2 1V2.18A10 10 0 0 1 46.24 0h2.06a8 8 0 0 0-.3 2.18v10.58L73.53 0H78z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .bg-pattern-5 {
+            background-color: #343a40;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .color-picker {
+            width: 100%;
+            height: 40px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .pattern-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .pattern-option {
+            width: 50px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            border: 2px solid #fff;
+        }
+        
+        .pattern-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .pattern-option.active {
+            border: 2px solid #333;
+            transform: scale(1.1);
+        }
+        
+        .emoji-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .emoji-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .emoji-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .emoji-option.active {
+            border: 2px solid #333;
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .id-card {
+                width: 320px;
+                height: 460px;
+            }
+            
+            .student-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Student ID Card Generator</h1>
+    
+    <div class="container">
+        <div class="form-container">
+            <h2>Enter Student Details</h2>
+            
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" placeholder="Enter full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="fatherName">Father's Name</label>
+                <input type="text" id="fatherName" placeholder="Enter father's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="motherName">Mother's Name</label>
+                <input type="text" id="motherName" placeholder="Enter mother's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob">
+            </div>
+            
+            <div class="form-group">
+                <label for="rollNo">Roll No</label>
+                <input type="text" id="rollNo" placeholder="Enter roll number">
+            </div>
+            
+            <div class="form-group">
+                <label for="contactNo">Contact No</label>
+                <input type="text" id="contactNo" placeholder="Enter contact number">
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" placeholder="Enter address">
+            </div>
+            
+            <div class="form-group">
+                <label for="class">Class</label>
+                <select id="class">
+                    <option value="Nursery">Nursery</option>
+                    <option value="KG">KG</option>
+                    <option value="1st">1st</option>
+                    <option value="2nd">2nd</option>
+                    <option value="3rd">3rd</option>
+                    <option value="4th">4th</option>
+                    <option value="5th" selected>5th</option>
+                    <option value="6th">6th</option>
+                    <option value="7th">7th</option>
+                    <option value="8th">8th</option>
+                    <option value="9th">9th</option>
+                    <option value="10th">10th</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="studentPhoto">Student Photo</label>
+                <input type="file" id="studentPhoto" accept="image/*">
+            </div>
+            
+            <div class="customization-section">
+                <h2>Customize ID Card</h2>
+                
+                <div class="form-group">
+                    <label>Card Background Pattern</label>
+                    <div class="pattern-options">
+                        <div class="pattern-option bg-pattern-1 active" data-pattern="bg-pattern-1"></div>
+                        <div class="pattern-option bg-pattern-2" data-pattern="bg-pattern-2"></div>
+                        <div class="pattern-option bg-pattern-3" data-pattern="bg-pattern-3"></div>
+                        <div class="pattern-option bg-pattern-4" data-pattern="bg-pattern-4"></div>
+                        <div class="pattern-option bg-pattern-5" data-pattern="bg-pattern-5"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Class Badge Emoji</label>
+                    <div class="emoji-options">
+                        <div class="emoji-option active" data-emoji="📚">📚</div>
+                        <div class="emoji-option" data-emoji="🎓">🎓</div>
+                        <div class="emoji-option" data-emoji="✏️">✏️</div>
+                        <div class="emoji-option" data-emoji="🔍">🔍</div>
+                        <div class="emoji-option" data-emoji="🌟">🌟</div>
+                        <div class="emoji-option" data-emoji="🧠">🧠</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="headerBgColor">Custom Header Background Color</label>
+                    <input type="color" id="headerBgColor" class="color-picker" value="#0066cc">
+                </div>
+                
+                <div class="form-group">
+                    <label for="headerTextColor">Custom Header Text Color</label>
+                    <input type="color" id="headerTextColor" class="color-picker" value="#ffffff">
+                </div>
+                
+                <div class="form-group">
+                    <label for="nameTextColor">Student Name Text Color</label>
+                    <input type="color" id="nameTextColor" class="color-picker" value="#0066cc">
+                </div>
+                
+                <div class="form-group">
+                    <label for="schoolName">School Name</label>
+                    <input type="text" id="schoolName" value="GBPS P.I.B NATIONALIZED SCHOOL">
+                </div>
+                
+                <div class="form-group">
+                    <label for="semisCode">SEMIS Code</label>
+                    <input type="text" id="semisCode" value="123456">
+                </div>
+            </div>
+            
+            <div class="download-options">
+                <button id="downloadPngBtn" class="download-png">Download as PNG</button>
+                <button id="downloadPdfBtn" class="download-pdf">Download as PDF</button>
+            </div>
+        </div>
+        
+        <div class="preview-container">
+            <h2>ID Card Preview</h2>
+            
+            <div id="idCard" class="id-card bg-pattern-1">
+                <div class="card-header">
+                    <div id="schoolNameDisplay" class="school-name">GBPS P.I.B NATIONALIZED SCHOOL</div>
+                    <div class="school-address">Education Department</div>
+                    <div class="semis-code">SEMIS code: <span id="semisCodeDisplay">123456</span></div>
+                </div>
+                
+                <div id="studentNameDisplay" class="student-name-display">Student Name</div>
+                
+                <div class="card-body">
+                    <div class="left-section">
+                        <div class="class-badge">
+                            <span class="class-emoji">📚</span>
+                            <span id="classValue">5th</span>
+                        </div>
+                    </div>
+                    
+                    <div class="right-section">
+                        <div class="student-photo-container">
+                            <div class="student-photo">
+                                <img id="photoPreview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTQwIiB2aWV3Qm94PSIwIDAgMTIwIDE0MCI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNjAgNTBDNjYuNjI3NCA1MCA3MiA1NS4zNzI2IDcyIDYyQzcyIDY4LjYyNzQgNjYuNjI3NCA3NCA2MCA3NEM1My4zNzI2IDc0IDQ4IDY4LjYyNzQgNDggNjJDNDggNTUuMzcyNiA1My4zNzI2IDUwIDYwIDUwWk00MCA5MEg4MEM4MCA5MCA4MCA3NCA2MCA3NEM0MCA3NCA0MCA5MCA0MCA5MFoiIGZpbGw9IiNlMGUwZTAiLz48L3N2Zz4=" alt="Student Photo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <div class="student-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Father's Name:</div>
+                            <div id="fatherNameValue" class="detail-value">-</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Mother's Name:</div>
+                            <div id="motherNameValue" class="detail-value">-</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Roll No:</div>
+                            <div id="rollNoValue" class="detail-value">-</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">D.O.B:</div>
+                            <div id="dobValue" class="detail-value">-</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Contact No:</div>
+                            <div id="contactNoValue" class="detail-value">-</div>
+                        </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Address:</div>
+                            <div id="addressValue" class="detail-value">-</div>
+                        </div>
+                    </div>
+                    
+                    <div class="signature">Principal's Signature</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load jsPDF
+        window.jsPDF = window.jspdf.jsPDF;
+        
+        // DOM elements
+        const studentPhoto = document.getElementById('studentPhoto');
+        const photoPreview = document.getElementById('photoPreview');
+        const downloadPngBtn = document.getElementById('downloadPngBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const patternOptions = document.querySelectorAll('.pattern-option');
+        const emojiOptions = document.querySelectorAll('.emoji-option');
+        const cardHeader = document.querySelector('.card-header');
+        const classBadge = document.querySelector('.class-badge');
+        const studentPhotoFrame = document.querySelector('.student-photo');
+        const idCard = document.getElementById('idCard');
+        const schoolNameDisplay = document.getElementById('schoolNameDisplay');
+        const schoolAddress = document.querySelector('.school-address');
+        const studentNameDisplay = document.getElementById('studentNameDisplay');
+        const classEmoji = document.querySelector('.class-emoji');
+        
+        // Custom color pickers
+        const headerBgColor = document.getElementById('headerBgColor');
+        const headerTextColor = document.getElementById('headerTextColor');
+        const nameTextColor = document.getElementById('nameTextColor');
+        
+        // Form inputs
+        const inputs = {
+            studentName: document.getElementById('studentName'),
+            fatherName: document.getElementById('fatherName'),
+            motherName: document.getElementById('motherName'),
+            dob: document.getElementById('dob'),
+            rollNo: document.getElementById('rollNo'),
+            contactNo: document.getElementById('contactNo'),
+            address: document.getElementById('address'),
+            class: document.getElementById('class'),
+            schoolName: document.getElementById('schoolName'),
+            semisCode: document.getElementById('semisCode')
+        };
+        
+        // Card display elements
+        const displays = {
+            nameValue: document.getElementById('studentNameDisplay'),
+            fatherNameValue: document.getElementById('fatherNameValue'),
+            motherNameValue: document.getElementById('motherNameValue'),
+            dobValue: document.getElementById('dobValue'),
+            rollNoValue: document.getElementById('rollNoValue'),
+            contactNoValue: document.getElementById('contactNoValue'),
+            addressValue: document.getElementById('addressValue'),
+            classValue: document.getElementById('classValue'),
+            schoolNameDisplay: document.getElementById('schoolNameDisplay'),
+            semisCodeDisplay: document.getElementById('semisCodeDisplay')
+        };
+        
+        // Initialize with default values
+        updateCardFromInputs();
+        
+        // Add event listeners for live updates
+        Object.keys(inputs).forEach(key => {
+            const input = inputs[key];
+            input.addEventListener('input', updateCardFromInputs);
+        });
+        
+        // Handle photo upload
+        studentPhoto.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    photoPreview.src = e.target.result;
+                }
+                
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        // Pattern options
+        patternOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all pattern options
+                patternOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Get pattern class
+                const patternClass = this.getAttribute('data-pattern');
+                
+                // Remove all pattern classes from ID card
+                idCard.classList.remove('bg-pattern-1', 'bg-pattern-2', 'bg-pattern-3', 'bg-pattern-4', 'bg-pattern-5');
+                
+                // Add selected pattern class
+                idCard.classList.add(patternClass);
+                
+                // If dark pattern, adjust text colors
+                if (patternClass === 'bg-pattern-5') {
+                    document.querySelectorAll('.detail-value, .detail-label').forEach(el => {
+                        el.style.color = '#ffffff';
+                    });
+                    document.querySelector('.card-footer').style.backgroundColor = 'rgba(52, 58, 64, 0.8)';
+                    document.querySelector('.card-footer').style.borderTopColor = '#495057';
+                    document.querySelector('.signature').style.color = '#ffffff';
+                    document.querySelector('.signature').style.borderTopColor = '#495057';
+                    studentNameDisplay.style.color = '#ffffff';
+                } else {
+                    document.querySelectorAll('.detail-value').forEach(el => {
+                        el.style.color = '#222';
+                    });
+                    document.querySelectorAll('.detail-label').forEach(el => {
+                        el.style.color = '#555';
+                    });
+                    document.querySelector('.card-footer').style.backgroundColor = 'rgba(249, 249, 249, 0.9)';
+                    document.querySelector('.card-footer').style.borderTopColor = '#eee';
+                    document.querySelector('.signature').style.color = '#444';
+                    document.querySelector('.signature').style.borderTopColor = '#ccc';
+                    studentNameDisplay.style.color = nameTextColor.value;
+                }
+            });
+        });
+        
+        // Emoji options
+        emojiOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all emoji options
+                emojiOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Get emoji
+                const emoji = this.getAttribute('data-emoji');
+                
+                // Update class badge emoji
+                classEmoji.textContent = emoji;
+            });
+        });
+        
+        // Custom color picker for header background
+        headerBgColor.addEventListener('input', function() {
+            const color = this.value;
+            cardHeader.style.backgroundColor = color;
+            classBadge.style.background = `linear-gradient(135deg, ${color}, ${lightenColor(color, 20)})`;
+            studentPhotoFrame.style.borderColor = color;
+            document.querySelector('.semis-code').style.background = `linear-gradient(to right, ${color}, ${lightenColor(color, 20)})`;
+        });
+        
+        // Custom color picker for header text
+        headerTextColor.addEventListener('input', function() {
+            const color = this.value;
+            schoolNameDisplay.style.color = color;
+            schoolAddress.style.color = color;
+            classBadge.style.color = color;
+        });
+        
+        // Custom color picker for student name text
+        nameTextColor.addEventListener('input', function() {
+            const color = this.value;
+            studentNameDisplay.style.color = color;
+        });
+        
+        // Helper function to lighten a color
+        function lightenColor(color, percent) {
+            const num = parseInt(color.replace('#', ''), 16),
+                  amt = Math.round(2.55 * percent),
+                  R = (num >> 16) + amt,
+                  G = (num >> 8 & 0x00FF) + amt,
+                  B = (num & 0x0000FF) + amt;
+            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
+                         (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
+                         (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+        
+        // Update card from input values
+        function updateCardFromInputs() {
+            // Update text values
+            displays.nameValue.textContent = inputs.studentName.value || 'Student Name';
+            displays.fatherNameValue.textContent = inputs.fatherName.value || '-';
+            displays.motherNameValue.textContent = inputs.motherName.value || '-';
+            displays.rollNoValue.textContent = inputs.rollNo.value || '-';
+            displays.contactNoValue.textContent = inputs.contactNo.value || '-';
+            displays.addressValue.textContent = inputs.address.value || '-';
+            displays.classValue.textContent = inputs.class.value;
+            displays.schoolNameDisplay.textContent = inputs.schoolName.value;
+            displays.semisCodeDisplay.textContent = inputs.semisCode.value;
+            
+            // Format date if provided
+            if (inputs.dob.value) {
+                const date = new Date(inputs.dob.value);
+                const formattedDate = date.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                }).replace(/\//g, '-');
+                displays.dobValue.textContent = formattedDate;
+            } else {
+                displays.dobValue.textContent = '-';
+            }
+        }
+        
+        // Download ID card as PNG
+        downloadPngBtn.addEventListener('click', function() {
+            // Create a clone of the ID card to ensure styles are preserved
+            const idCardClone = idCard.cloneNode(true);
+            document.body.appendChild(idCardClone);
+            
+            // Apply the same styles to the clone
+            idCardClone.style.position = 'absolute';
+            idCardClone.style.left = '-9999px';
+            
+            // Ensure all styles are applied
+            const computedStyle = window.getComputedStyle(idCard);
+            for (let i = 0; i < computedStyle.length; i++) {
+                const prop = computedStyle[i];
+                idCardClone.style[prop] = computedStyle.getPropertyValue(prop);
+            }
+            
+            // Capture the clone
+            html2canvas(idCardClone, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'student-id-card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Remove the clone
+                document.body.removeChild(idCardClone);
+            });
+        });
+        
+        // Download ID card as PDF
+        downloadPdfBtn.addEventListener('click', function() {
+            // Create a clone of the ID card to ensure styles are preserved
+            const idCardClone = idCard.cloneNode(true);
+            document.body.appendChild(idCardClone);
+            
+            // Apply the same styles to the clone
+            idCardClone.style.position = 'absolute';
+            idCardClone.style.left = '-9999px';
+            
+            // Ensure all styles are applied
+            const computedStyle = window.getComputedStyle(idCard);
+            for (let i = 0; i < computedStyle.length; i++) {
+                const prop = computedStyle[i];
+                idCardClone.style[prop] = computedStyle.getPropertyValue(prop);
+            }
+            
+            // Capture the clone
+            html2canvas(idCardClone, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Calculate the dimensions to fit the ID card on the PDF
+                const imgWidth = 210 * 0.8; // 80% of A4 width
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                const xPos = (210 - imgWidth) / 2;
+                const yPos = 20;
+                
+                pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
+                pdf.save('student-id-card.pdf');
+                
+                // Remove the clone
+                document.body.removeChild(idCardClone);
+            });
+        });
+    </script>
+</body>
+</html>
