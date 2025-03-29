@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student ID Card Generator</title>
+    <title>Sindh Government Student ID Card Generator</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        
         * {
             margin: 0;
             padding: 0;
@@ -127,7 +126,6 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
             position: relative;
             transition: transform 0.3s;
-            background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
         }
         
         .id-card:hover {
@@ -135,39 +133,59 @@
         }
         
         .card-header {
-            background-color: #0066cc;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
             color: white;
             padding: 18px 15px;
             position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 20px;
+        }
+        
+        .header-text {
+            flex: 1;
         }
         
         .school-name {
-            text-align: center;
             font-size: 18px;
             font-weight: bold;
-            margin-top: 5px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
         
         .school-address {
-            text-align: center;
-            font-size: 12px;
+            color: #fff;
+            font-size: 14px;
             margin-top: 4px;
-            opacity: 0.9;
         }
         
         .semis-code {
             position: absolute;
-            top: 170px;
-            left: 15px;
-            width: 150px;
+            top: 10px;
+            right: 15px;
             background-color: rgba(255, 255, 255, 0.9);
-            color: white;
+            color: #0066cc;
             padding: 4px 10px;
             border-radius: 6px;
             font-size: 12px;
             font-weight: bold;
-            background: linear-gradient(to right, #0156aa, #0099ff);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
@@ -179,94 +197,17 @@
             padding: 5px 10px;
             color: #0066cc;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 2;
-        }
-        
-        .student-name-display::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 3px;
-            background: linear-gradient(to right, transparent, #0066cc, transparent);
         }
         
         .card-body {
             padding: 10px 15px;
             display: flex;
-            height: calc(100% - 200px);
-            position: relative;
-            margin-top: -80px;
-        }
-        
-        .left-section {
-            flex: 1;
-            display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding-right: 10px;
-            margin-top: 30px;
-        }
-        
-        .class-badge {
-            background: linear-gradient(135deg, #0066cc, #0099ff);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: bold;
-            width: 150px;
-            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.4);
-            font-size: 18px;
-            text-align: center;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .class-badge::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.1) 25%, 
-                                             rgba(255, 255, 255, 0.1) 50%, transparent 50%, 
-                                             transparent 75%, rgba(255, 255, 255, 0.1) 75%);
-            background-size: 10px 10px;
-            z-index: 1;
-        }
-        
-        .class-badge span {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .class-emoji {
-            font-size: 22px;
-            margin-right: 5px;
-        }
-        
-        .right-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-left: 10px;
-            position: relative;
         }
         
         .student-photo-container {
-            position: relative;
+            margin: 10px 0 30px 0;
         }
         
         .student-photo {
@@ -276,8 +217,6 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            position: relative;
-            z-index: 2;
         }
         
         .student-photo img {
@@ -306,34 +245,16 @@
         }
         
         .detail-label {
-            font-weight: bold;
-            font-size: 12px;
-            color: #555;
+            font-weight: bolder;
+            font-size: 18px;
+            color: #000000;
             margin-bottom: 2px;
         }
         
         .detail-value {
+            font-weight: bold;
             font-size: 14px;
-            color: #222;
-        }
-        
-        .signature {
-            text-align: right;
-            font-size: 12px;
-            font-style: italic;
-            margin-top: 12px;
-            border-top: 1px dashed #ccc;
-            padding-top: 8px;
-            color: #444;
-        }
-        
-        .download-btn {
-            margin-top: 25px;
-            background-color: #28a745;
-        }
-        
-        .download-btn:hover {
-            background-color: #218838;
+            color: #616161;
         }
         
         .download-options {
@@ -362,101 +283,22 @@
             background-color: #c82333;
         }
         
-        .customization-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
+        .signature {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            font-size: 12px;
+            color: #555;
+            font-style: italic;
         }
         
-        .bg-pattern-1 {
-            background-color: #ffffff;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .bg-pattern-2 {
-            background-color: #ffffff;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.07'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .bg-pattern-3 {
-            background-color: #ffffff;
-            background-image: url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230066cc' fill-opacity='0.06'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .bg-pattern-4 {
-            background-color: #ffffff;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='24' viewBox='0 0 88 24'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='autumn' fill='%230066cc' fill-opacity='0.05'%3E%3Cpath d='M10 0l30 15 2 1V2.18A10 10 0 0 0 41.76 0H39.7a8 8 0 0 1 .3 2.18v10.58L14.47 0H10zm31.76 24a10 10 0 0 0-5.29-6.76L4 1 2 0v13.82a10 10 0 0 0 5.53 8.94L10 24h4.47l-6.05-3.02A8 8 0 0 1 4 13.82V3.24l31.58 15.78A8 8 0 0 1 39.7 24h2.06zM78 24l2.47-1.24A10 10 0 0 0 86 13.82V0l-2 1-32.47 16.24A10 10 0 0 0 46.24 24h2.06a8 8 0 0 1 4.12-4.98L84 3.24v10.58a8 8 0 0 1-4.42 7.16L73.53 24H78zm0-24L48 15l-2 1V2.18A10 10 0 0 1 46.24 0h2.06a8 8 0 0 0-.3 2.18v10.58L73.53 0H78z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .bg-pattern-5 {
-            background-color: #343a40;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        .color-picker {
-            width: 100%;
-            height: 40px;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        
-        .pattern-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .pattern-option {
-            width: 50px;
-            height: 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-            border: 2px solid #fff;
-        }
-        
-        .pattern-option:hover {
-            transform: scale(1.1);
-        }
-        
-        .pattern-option.active {
-            border: 2px solid #333;
-            transform: scale(1.1);
-        }
-        
-        .emoji-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .emoji-option {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-            border: 2px solid #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            background-color: #f8f9fa;
-        }
-        
-        .emoji-option:hover {
-            transform: scale(1.1);
-        }
-        
-        .emoji-option.active {
-            border: 2px solid #333;
-            transform: scale(1.1);
+        .signature::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 1px;
+            background-color: #555;
+            margin-top: 5px;
         }
         
         @media (max-width: 768px) {
@@ -476,7 +318,7 @@
     </style>
 </head>
 <body>
-    <h1>Student ID Card Generator</h1>
+    <h1>Sindh Government Student ID Card Generator</h1>
     
     <div class="container">
         <div class="form-container">
@@ -521,60 +363,19 @@
             </div>
             
             <div class="form-group">
-                <label for="studentPhoto">Student Photo</label>
-                <input type="file" id="studentPhoto" accept="image/*">
+                <label for="schoolName">School Name</label>
+                <input type="text" id="schoolName" value="GBPS P.I.B NATIONALIZED SCHOOL
+                ">
             </div>
             
-            <div class="customization-section">
-                <h2>Customize ID Card</h2>
-                
-                <div class="form-group">
-                    <label>Card Background Pattern</label>
-                    <div class="pattern-options">
-                        <div class="pattern-option bg-pattern-1 active" data-pattern="bg-pattern-1"></div>
-                        <div class="pattern-option bg-pattern-2" data-pattern="bg-pattern-2"></div>
-                        <div class="pattern-option bg-pattern-3" data-pattern="bg-pattern-3"></div>
-                        <div class="pattern-option bg-pattern-4" data-pattern="bg-pattern-4"></div>
-                        <div class="pattern-option bg-pattern-5" data-pattern="bg-pattern-5"></div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Class Badge Emoji</label>
-                    <div class="emoji-options">
-                        <div class="emoji-option active" data-emoji="📚">📚</div>
-                        <div class="emoji-option" data-emoji="🎓">🎓</div>
-                        <div class="emoji-option" data-emoji="✏️">✏️</div>
-                        <div class="emoji-option" data-emoji="🔍">🔍</div>
-                        <div class="emoji-option" data-emoji="🌟">🌟</div>
-                        <div class="emoji-option" data-emoji="🧠">🧠</div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="headerBgColor">Custom Header Background Color</label>
-                    <input type="color" id="headerBgColor" class="color-picker" value="#0066cc">
-                </div>
-                
-                <div class="form-group">
-                    <label for="headerTextColor">Custom Header Text Color</label>
-                    <input type="color" id="headerTextColor" class="color-picker" value="#ffffff">
-                </div>
-                
-                <div class="form-group">
-                    <label for="nameTextColor">Student Name Text Color</label>
-                    <input type="color" id="nameTextColor" class="color-picker" value="#0066cc">
-                </div>
-                
-                <div class="form-group">
-                    <label for="schoolName">School Name</label>
-                    <input type="text" id="schoolName" value="GBPS P.I.B NATIONALIZED SCHOOL">
-                </div>
-                
-                <div class="form-group">
-                    <label for="semisCode">SEMIS Code</label>
-                    <input type="text" id="semisCode" value="123456">
-                </div>
+            <div class="form-group">
+                <label for="semisCode">SEMIS CODE</label>
+                <input type="text" id="semisCode" value="408080057">
+            </div>
+            
+            <div class="form-group">
+                <label for="studentPhoto">Student Photo</label>
+                <input type="file" id="studentPhoto" accept="image/*">
             </div>
             
             <div class="download-options">
@@ -586,31 +387,27 @@
         <div class="preview-container">
             <h2>ID Card Preview</h2>
             
-            <div id="idCard" class="id-card bg-pattern-1">
+            <div id="idCard" class="id-card">
                 <div class="card-header">
-                    <div id="schoolNameDisplay" class="school-name">GBPS P.I.B NATIONALIZED SCHOOL</div>
-                    <div class="school-address">Education Department</div>
-                    <div class="semis-code">SEMIS code: <span id="semisCodeDisplay">123456</span></div>
+                    <div class="logo">
+                        <img src="data:image/jpeg;base64,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" alt="Sindh Government Logo">
+                    </div>
+                    <div class="header-text">
+                        <div id="schoolNameDisplay" class="school-name">Sindh Government School</div>
+                        <div class="school-address">SEMIS code: <span id="semisCodeDisplay">123456</span></div>
+                    </div>
                 </div>
                 
                 <div id="studentNameDisplay" class="student-name-display">Student Name</div>
                 
                 <div class="card-body">
-                    <div class="left-section">
-                        <div class="class-badge">
-                            <span class="class-emoji">📚</span>
-                            <span id="classValue">5th</span>
-                        </div>
-                    </div>
-                    
-                    <div class="right-section">
-                        <div class="student-photo-container">
-                            <div class="student-photo">
-                                <img id="photoPreview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTQwIiB2aWV3Qm94PSIwIDAgMTIwIDE0MCI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNjAgNTBDNjYuNjI3NCA1MCA3MiA1NS4zNzI2IDcyIDYyQzcyIDY4LjYyNzQgNjYuNjI3NCA3NCA2MCA3NEM1My4zNzI2IDc0IDQ4IDY4LjYyNzQgNDggNjJDNDggNTUuMzcyNiA1My4zNzI2IDUwIDYwIDUwWk00MCA5MEg4MEM4MCA5MCA4MCA3NCA2MCA3NEM0MCA3NCA0MCA5MCA0MCA5MFoiIGZpbGw9IiNlMGUwZTAiLz48L3N2Zz4=" alt="Student Photo">
-                            </div>
+                    <div class="student-photo-container">
+                        <div class="student-photo">
+                            <img id="photoPreview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTQwIiB2aWV3Qm94PSIwIDAgMTIwIDE0MCI+PHJlY3Qgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxNDAiIGZpbGw9IiNmZmZmZmYiLz48cGF0aCBkPSJNNjAgNTBDNjYuNjI3NCA1MCA3MiA1NS4zNzI2IDcyIDYyQzcyIDY4LjYyNzQgNjYuNjI3NCA3NCA2MCA3NEM1My4zNzI2IDc0IDQ4IDY4LjYyNzQgNDggNjJDNDggNTUuMzcyNiA1My4zNzI2IDUwIDYwIDUwWk00MCA5MEg4MEM4MCA5MCA4MCA3NCA2MCA3NEM0MCA3NCA0MCA5MCA0MCA5MFoiIGZpbGw9IiNlMGUwZTAiLz48L3N2Zz4=" alt="Student Photo">
                         </div>
                     </div>
                 </div>
+                
                 
                 <div class="card-footer">
                     <div class="student-details">
@@ -618,6 +415,13 @@
                             <div class="detail-label">Father's Name:</div>
                             <div id="fatherNameValue" class="detail-value">-</div>
                         </div>
+                        
+                        <div class="detail-item">
+                            <div class="detail-label">Class:</div>
+                            <div id="classValue" class="detail-value">5th</div>
+                        </div>
+
+
                         
                         <div class="detail-item">
                             <div class="detail-label">Roll No:</div>
@@ -629,8 +433,6 @@
                             <div id="contactNoValue" class="detail-value">-</div>
                         </div>
                     </div>
-                    
-                    <div class="signature">Principal's Signature</div>
                 </div>
             </div>
         </div>
@@ -645,21 +447,6 @@
         const photoPreview = document.getElementById('photoPreview');
         const downloadPngBtn = document.getElementById('downloadPngBtn');
         const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-        const patternOptions = document.querySelectorAll('.pattern-option');
-        const emojiOptions = document.querySelectorAll('.emoji-option');
-        const cardHeader = document.querySelector('.card-header');
-        const classBadge = document.querySelector('.class-badge');
-        const studentPhotoFrame = document.querySelector('.student-photo');
-        const idCard = document.getElementById('idCard');
-        const schoolNameDisplay = document.getElementById('schoolNameDisplay');
-        const schoolAddress = document.querySelector('.school-address');
-        const studentNameDisplay = document.getElementById('studentNameDisplay');
-        const classEmoji = document.querySelector('.class-emoji');
-        
-        // Custom color pickers
-        const headerBgColor = document.getElementById('headerBgColor');
-        const headerTextColor = document.getElementById('headerTextColor');
-        const nameTextColor = document.getElementById('nameTextColor');
         
         // Form inputs
         const inputs = {
@@ -705,102 +492,6 @@
             }
         });
         
-        // Pattern options
-        patternOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all pattern options
-                patternOptions.forEach(opt => opt.classList.remove('active'));
-                
-                // Add active class to clicked option
-                this.classList.add('active');
-                
-                // Get pattern class
-                const patternClass = this.getAttribute('data-pattern');
-                
-                // Remove all pattern classes from ID card
-                idCard.classList.remove('bg-pattern-1', 'bg-pattern-2', 'bg-pattern-3', 'bg-pattern-4', 'bg-pattern-5');
-                
-                // Add selected pattern class
-                idCard.classList.add(patternClass);
-                
-                // If dark pattern, adjust text colors
-                if (patternClass === 'bg-pattern-5') {
-                    document.querySelectorAll('.detail-value, .detail-label').forEach(el => {
-                        el.style.color = '#ffffff';
-                    });
-                    document.querySelector('.card-footer').style.backgroundColor = 'rgba(52, 58, 64, 0.8)';
-                    document.querySelector('.card-footer').style.borderTopColor = '#495057';
-                    document.querySelector('.signature').style.color = '#ffffff';
-                    document.querySelector('.signature').style.borderTopColor = '#495057';
-                    studentNameDisplay.style.color = '#ffffff';
-                } else {
-                    document.querySelectorAll('.detail-value').forEach(el => {
-                        el.style.color = '#222';
-                    });
-                    document.querySelectorAll('.detail-label').forEach(el => {
-                        el.style.color = '#555';
-                    });
-                    document.querySelector('.card-footer').style.backgroundColor = 'rgba(249, 249, 249, 0.9)';
-                    document.querySelector('.card-footer').style.borderTopColor = '#eee';
-                    document.querySelector('.signature').style.color = '#444';
-                    document.querySelector('.signature').style.borderTopColor = '#ccc';
-                    studentNameDisplay.style.color = nameTextColor.value;
-                }
-            });
-        });
-        
-        // Emoji options
-        emojiOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                // Remove active class from all emoji options
-                emojiOptions.forEach(opt => opt.classList.remove('active'));
-                
-                // Add active class to clicked option
-                this.classList.add('active');
-                
-                // Get emoji
-                const emoji = this.getAttribute('data-emoji');
-                
-                // Update class badge emoji
-                classEmoji.textContent = emoji;
-            });
-        });
-        
-        // Custom color picker for header background
-        headerBgColor.addEventListener('input', function() {
-            const color = this.value;
-            cardHeader.style.backgroundColor = color;
-            classBadge.style.background = `linear-gradient(135deg, ${color}, ${lightenColor(color, 20)})`;
-            studentPhotoFrame.style.borderColor = color;
-            document.querySelector('.semis-code').style.background = `linear-gradient(to right, ${color}, ${lightenColor(color, 20)})`;
-        });
-        
-        // Custom color picker for header text
-        headerTextColor.addEventListener('input', function() {
-            const color = this.value;
-            schoolNameDisplay.style.color = color;
-            schoolAddress.style.color = color;
-            classBadge.style.color = color;
-        });
-        
-        // Custom color picker for student name text
-        nameTextColor.addEventListener('input', function() {
-            const color = this.value;
-            studentNameDisplay.style.color = color;
-        });
-        
-        // Helper function to lighten a color
-        function lightenColor(color, percent) {
-            const num = parseInt(color.replace('#', ''), 16),
-                  amt = Math.round(2.55 * percent),
-                  R = (num >> 16) + amt,
-                  G = (num >> 8 & 0x00FF) + amt,
-                  B = (num & 0x0000FF) + amt;
-            return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + 
-                         (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + 
-                         (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-        }
-        
         // Update card from input values
         function updateCardFromInputs() {
             // Update text values
@@ -814,84 +505,62 @@
         }
         
         // Download ID card as PNG
-        downloadPngBtn.addEventListener('click', function() {
-            // Create a clone of the ID card to ensure styles are preserved
-            const idCardClone = idCard.cloneNode(true);
-            document.body.appendChild(idCardClone);
-            
-            // Apply the same styles to the clone
-            idCardClone.style.position = 'absolute';
-            idCardClone.style.left = '-9999px';
-            
-            // Ensure all styles are applied
-            const computedStyle = window.getComputedStyle(idCard);
-            for (let i = 0; i < computedStyle.length; i++) {
-                const prop = computedStyle[i];
-                idCardClone.style[prop] = computedStyle.getPropertyValue(prop);
-            }
-            
-            // Capture the clone
-            html2canvas(idCardClone, {
-                backgroundColor: null,
-                scale: 2,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'student-id-card.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                // Remove the clone
-                document.body.removeChild(idCardClone);
+        // Download ID card as PNG
+downloadPngBtn.addEventListener('click', function() {
+    html2canvas(document.getElementById('idCard'), {
+        backgroundColor: null,
+        scale: 2,
+        logging: true,
+        useCORS: true,
+        allowTaint: true
+    }).then(canvas => {
+        // For browsers that support the download attribute
+        const link = document.createElement('a');
+        link.download = 'student-id-card.png';
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }).catch(error => {
+        console.error('Error generating PNG:', error);
+        alert('There was an error generating the PNG. Please check the console for details.');
+    });
+});
+
+// Download ID card as PDF
+downloadPdfBtn.addEventListener('click', function() {
+    html2canvas(document.getElementById('idCard'), {
+        backgroundColor: null,
+        scale: 2,
+        logging: true,
+        useCORS: true,
+        allowTaint: true
+    }).then(canvas => {
+        try {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
             });
-        });
-        
-        // Download ID card as PDF
-        downloadPdfBtn.addEventListener('click', function() {
-            // Create a clone of the ID card to ensure styles are preserved
-            const idCardClone = idCard.cloneNode(true);
-            document.body.appendChild(idCardClone);
             
-            // Apply the same styles to the clone
-            idCardClone.style.position = 'absolute';
-            idCardClone.style.left = '-9999px';
+            // Calculate the dimensions to fit the ID card on the PDF
+            const imgWidth = 210 * 0.8; // 80% of A4 width
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            const xPos = (210 - imgWidth) / 2;
+            const yPos = 20;
             
-            // Ensure all styles are applied
-            const computedStyle = window.getComputedStyle(idCard);
-            for (let i = 0; i < computedStyle.length; i++) {
-                const prop = computedStyle[i];
-                idCardClone.style[prop] = computedStyle.getPropertyValue(prop);
-            }
-            
-            // Capture the clone
-            html2canvas(idCardClone, {
-                backgroundColor: null,
-                scale: 2,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                // Calculate the dimensions to fit the ID card on the PDF
-                const imgWidth = 210 * 0.8; // 80% of A4 width
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                const xPos = (210 - imgWidth) / 2;
-                const yPos = 20;
-                
-                pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
-                pdf.save('student-id-card.pdf');
-                
-                // Remove the clone
-                document.body.removeChild(idCardClone);
-            });
-        });
+            pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
+            pdf.save('student-id-card.pdf');
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('There was an error generating the PDF. Please check the console for details.');
+        }
+    }).catch(error => {
+        console.error('Error capturing card for PDF:', error);
+        alert('There was an error capturing the card. Please check the console for details.');
+    });
+});
     </script>
 </body>
 </html>
-
