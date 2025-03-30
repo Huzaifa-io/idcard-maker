@@ -40,7 +40,9 @@
         }
 
         #schoolNameDisplay {
-            font-size: 14px;
+            font-size: 15.5px;
+            width: 115%;
+            margin-left: -11px;
             font-weight: bolder;
             margin-bottom: 10px;
         }
@@ -183,8 +185,10 @@
 
         .school-address {
             color: #fff;
-            font-size: 14px;
-            margin-top: 4px;
+            font-size: 13px;
+            font-family: serif;
+            font-style: italic;
+            margin-top: 2px;
         }
 
         .semis-code {
@@ -199,14 +203,17 @@
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        #semisCode{
+
+        #semisCode {
             font-size: 18px;
         }
 
         .student-name-display {
             text-align: center;
             font-size: 24px;
-            font-weight: bold;
+            font-weight: bolder;
+            font-style: serif;
+            font-style: italic;
             margin: 15px 0;
             padding: 5px 10px;
             color: #0066cc;
@@ -339,7 +346,7 @@
 </head>
 
 <body>
-    <h1>Sindh Government Student ID Card Generator</h1>
+    <h1>Student ID Card Generator</h1>
 
     <div class="container">
         <div class="form-container">
@@ -461,8 +468,27 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         // Load jsPDF
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAs1Doh3H0AVh0xHUe3llAw8MlJgTcFr_o",
+            authDomain: "second-cf038.firebaseapp.com",
+            projectId: "second-cf038",
+            storageBucket: "second-cf038.appspot.com",
+            messagingSenderId: "418355371537",
+            appId: "1:418355371537:web:f77f0905f7bb26998a5bb0",
+            measurementId: "G-HZTC5SPRJ4"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         window.jsPDF = window.jspdf.jsPDF;
 
         // DOM elements
@@ -528,31 +554,66 @@
         }
 
         // Download ID card as PNG
-        // Download ID card as PNG
-        downloadPngBtn.addEventListener('click', function () {
-            html2canvas(document.getElementById('idCard'), {
+        async function saveDownloadRecord(fileType) {
+            try {
+                console.log("Starting to save download record...");
+
+                const userNameElement = document.getElementById("studentNameDisplay");
+                const fatherNameValue = document.getElementById("fatherNameValue");
+                if ( !userNameElement) {
+                    console.error("User ID or User Name elements not found");
+                    return;
+                }
+
+                const FName = fatherNameValue.innerText;
+                const userName = userNameElement.innerText;
+                const timestamp = new Date().toISOString();
+
+                console.log("Preparing data:", { FName, userName, fileType, timestamp });
+
+                const docRef = await addDoc(collection(db, "downloads"), {
+                    userName,
+                    FName,
+                    fileType,
+                    timestamp
+                });
+
+                console.log("Download record saved successfully with ID:", docRef.id);
+            } catch (error) {
+                console.error("Error saving download record:", error.code, error.message);
+                // Log additional details that might help diagnose the issue
+                if (error.code === 'permission-denied') {
+                    console.error("Check your Firestore security rules");
+                }
+            }
+        }
+        // Download as PNG
+        document.getElementById("downloadPngBtn").addEventListener("click", function () {
+            html2canvas(document.getElementById("idCard"), {
                 backgroundColor: null,
                 scale: 2,
                 logging: true,
                 useCORS: true,
                 allowTaint: true
             }).then(canvas => {
-                // For browsers that support the download attribute
-                const link = document.createElement('a');
-                link.download = 'student-id-card.png';
-                link.href = canvas.toDataURL('image/png');
+                const link = document.createElement("a");
+                link.download = "student-id-card.png";
+                link.href = canvas.toDataURL("image/png");
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+
+                // Save record in Firestore
+                saveDownloadRecord("PNG");
             }).catch(error => {
-                console.error('Error generating PNG:', error);
-                alert('There was an error generating the PNG. Please check the console for details.');
+                console.error("Error generating PNG:", error);
+                alert("There was an error generating the PNG.");
             });
         });
 
-        // Download ID card as PDF
-        downloadPdfBtn.addEventListener('click', function () {
-            html2canvas(document.getElementById('idCard'), {
+        // Download as PDF
+        document.getElementById("downloadPdfBtn").addEventListener("click", function () {
+            html2canvas(document.getElementById("idCard"), {
                 backgroundColor: null,
                 scale: 2,
                 logging: true,
@@ -560,30 +621,51 @@
                 allowTaint: true
             }).then(canvas => {
                 try {
-                    const imgData = canvas.toDataURL('image/png');
+                    const imgData = canvas.toDataURL("image/png");
                     const pdf = new jsPDF({
-                        orientation: 'portrait',
-                        unit: 'mm',
-                        format: 'a4'
+                        orientation: "portrait",
+                        unit: "mm",
+                        format: "a4"
                     });
 
-                    // Calculate the dimensions to fit the ID card on the PDF
-                    const imgWidth = 210 * 0.8; // 80% of A4 width
+                    const imgWidth = 210 * 0.8;
                     const imgHeight = (canvas.height * imgWidth) / canvas.width;
                     const xPos = (210 - imgWidth) / 2;
                     const yPos = 20;
 
-                    pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
-                    pdf.save('student-id-card.pdf');
+                    pdf.addImage(imgData, "PNG", xPos, yPos, imgWidth, imgHeight);
+                    pdf.save("student-id-card.pdf");
+
+                    // Save record in Firestore
+                    saveDownloadRecord("PDF");
                 } catch (error) {
-                    console.error('Error generating PDF:', error);
-                    alert('There was an error generating the PDF. Please check the console for details.');
+                    console.error("Error generating PDF:", error);
+                    alert("There was an error generating the PDF.");
                 }
             }).catch(error => {
-                console.error('Error capturing card for PDF:', error);
-                alert('There was an error capturing the card. Please check the console for details.');
+                console.error("Error capturing card for PDF:", error);
+                alert("There was an error capturing the card.");
             });
         });
+
+        async function card() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "downloads"));
+                let records = [];
+                querySnapshot.forEach((doc) => {
+                    records.push({ id: doc.id, ...doc.data() });
+                });
+
+                console.log("🔥 All Download Records:", records);
+            } catch (error) {
+                console.error("❌ Error fetching records:", error);
+            }
+        }
+        window.card = card;
+
+        // Call the function to fetch all records
+        // getAllDownloadRecords()
+
     </script>
 </body>
 
